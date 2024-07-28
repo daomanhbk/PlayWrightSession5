@@ -19,7 +19,7 @@ pipeline {
         stage('Testing') {
             steps {
                 bat '''
-                    export ENV = 'dev'; npx playwright test tests/session5Assignment.spec.ts --project=chrome
+                    npx playwright test tests/session5Assignment.spec.ts --project=chrome
                 '''
             }
         }
