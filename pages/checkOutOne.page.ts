@@ -2,7 +2,6 @@ import { expect, Locator, Page } from "@playwright/test";
 
 export class CheckOutOnePage {
     readonly page: Page;
-    readonly titleLbl: Locator;
     readonly firstNameTxt: Locator;
     readonly lastNameTxt: Locator;
     readonly zipCodeTxt: Locator;
@@ -10,16 +9,10 @@ export class CheckOutOnePage {
 
     constructor(page: Page){
         this.page = page;
-        this.titleLbl = page.locator('[data-test="title"]');
         this.firstNameTxt = page.locator('[data-test="firstName"]');
         this.lastNameTxt = page.locator('[data-test="lastName"]');
         this.zipCodeTxt = page.locator('[data-test="postalCode"]');
         this.continueBtn = page.locator('[data-test="continue"]');
-    }
-
-    // Verify the 'Checkout: Your Information' is displayed
-    async VerifyThePageTitleIsDisplayed(pageTitle: string) {
-        await expect(this.titleLbl).toContainText(pageTitle);        
     }
 
     // Input first name, last name, and Zip Code

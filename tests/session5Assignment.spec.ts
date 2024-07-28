@@ -1,6 +1,7 @@
 import { test, expect } from '@playwright/test';
-import { HomePage } from '../pages/home.page';
 import { LoginPage } from '../pages/login.page';
+import { HeaderPage } from '../pages/header.page';
+import { HomePage } from '../pages/home.page';
 import { CartPage } from '../pages/cart.page';
 import { CheckOutOnePage } from '../pages/checkOutOne.page';
 import { CheckOutTwoPage } from '../pages/checkOutTwo.page';
@@ -28,8 +29,9 @@ test ('TC001 - Verify error message appear when login with invalid user', async 
 })
 
 test ('TC002 - Verify user can order product successfully', async ({ page }) => {
-  const homePage = new HomePage(page);
   const loginPage = new LoginPage(page);
+  const headerPage = new HeaderPage(page);
+  const homePage = new HomePage(page);
   const cartPage = new CartPage(page);
   const checkOutOne = new CheckOutOnePage(page);
   const checkOutTwo = new CheckOutTwoPage(page);
@@ -46,7 +48,7 @@ test ('TC002 - Verify user can order product successfully', async ({ page }) => 
   })
 
   await test.step('Step 2: Verify the HomePage is displayed', async () => {
-    await homePage.VerifyThePageTitleIsDisplayed('Products');
+    await headerPage.VerifyThePageTitleIsDisplayed('Products');
   })
 
   // Initiate the itemName, itemDescription, and itemPrice variables
@@ -54,8 +56,10 @@ test ('TC002 - Verify user can order product successfully', async ({ page }) => 
   var itemDescription = '';
   var itemPrice = ''
 
-  var selectedItem = 2
-  await test.step('Step 3: Store the first item name, description, and price', async () => {
+  //Generate a randome number between 1 and 6, use for the item will be selected
+  const selectedItem = Math.floor(Math.random() * 6) + 1; 
+
+  await test.step('Step 3: Store the item name, description, and price that will be selected', async () => {
     itemName = await homePage.GetItemName(selectedItem);
     itemDescription = await homePage.GetItemDescription(selectedItem);
     itemPrice = await homePage.GetItemPrice(selectedItem);
@@ -69,13 +73,17 @@ test ('TC002 - Verify user can order product successfully', async ({ page }) => 
     await homePage.ClickCartButton();
   })
 
-  await test.step('Step 6: Validate pre-added item is visible', async () => {
+  await test.step('Step 6: Verify the CartPage is displayed', async () => {
+    await headerPage.VerifyThePageTitleIsDisplayed('Your Cart');
+  })
+
+  await test.step('Step 7: Validate pre-added item is visible', async () => {
     await cartPage.VerifyThePreAddedItemIsVisible(itemName, itemDescription, itemPrice);
     await cartPage.ClickCheckOutButton();
   })
 
-  await test.step('Step 7: Verify the "Checkout: Your Information" page is displayed', async () => {
-    await checkOutOne.VerifyThePageTitleIsDisplayed('Checkout: Your Information');
+  await test.step('Step 8: Verify the "Checkout: Your Information" page is displayed', async () => {
+    await headerPage.VerifyThePageTitleIsDisplayed('Checkout: Your Information');
   })
 
   // Initiate the user information
@@ -83,32 +91,32 @@ test ('TC002 - Verify user can order product successfully', async ({ page }) => 
   const lastName = 'LN';
   const zipCode = '12345';
 
-  await test.step('Step 8: Input all required fields', async () => {
+  await test.step('Step 9: Input all required fields', async () => {
     await checkOutOne.InputAllRequiredFields(firstName, lastName, zipCode);
   })
 
-  await test.step('Step 9: Validate the corresponding fields display input text', async () => {
+  await test.step('Step 10: Validate the corresponding fields display input text', async () => {
     await checkOutOne.ValidateTheCorrespondingFieldsDisplayInputText(firstName, lastName, zipCode);
   })
 
-  await test.step('Step 10: Click Continue', async () => {
+  await test.step('Step 11: Click Continue', async () => {
     await checkOutOne.ClickContinueButton();
   })
 
-  await test.step('Step 11: Verify the "Checkout: Overview" page is displayed', async () => {
-    await checkOutTwo.VerifyThePageTitleIsDisplayed('Checkout: Overview');
+  await test.step('Step 12: Verify the "Checkout: Overview" page is displayed', async () => {
+    await headerPage.VerifyThePageTitleIsDisplayed('Checkout: Overview');
   })
 
-  await test.step('Step 12: Verify the "Checkout: Overview" page is displayed', async () => {
+  await test.step('Step 13: Verify the "Checkout: Overview" page is displayed', async () => {
     await checkOutTwo.ValidateTheCheckOutPageHasItemAddedEarlier(itemName, itemDescription, itemPrice);
   })
 
-  await test.step('Step 13: Click Finish button', async () => {
+  await test.step('Step 14: Click Finish button', async () => {
     await checkOutTwo.ClickFinishButton();
   })
 
-  await test.step('Step 14: validate thank you msg: "Thank you for your order!"  and "Your order has been dispatched, and will arrive just as fast as the pony can get there!"', async () => {
-    await checkOutComplete.VerifyThePageTitleIsDisplayed('Checkout: Complete!');
+  await test.step('Step 15: validate thank you msg: "Thank you for your order!"  and "Your order has been dispatched, and will arrive just as fast as the pony can get there!"', async () => {
+    await headerPage.VerifyThePageTitleIsDisplayed('Checkout: Complete!');
     const thankyouMessage = 'Thank you for your order!';
     const completeMessage = 'Your order has been dispatched, and will arrive just as fast as the pony can get there!';
     await checkOutComplete.ValidateTheThankYouMessage(thankyouMessage);
